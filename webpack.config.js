@@ -40,6 +40,24 @@ var platformOptions = {
         keywords: ['react', 'react-component'],
         dependencies: { 'react': '^15.0.1', 'react-dom': '^15.0.1' }
     },
+    'react-native': {
+        externals: {
+            'react': {
+                root: 'React',
+                commonjs2: 'react',
+                commonjs: 'react',
+                amd: 'react'
+            },
+            'react-dom': {
+                root: 'ReactDOM',
+                commonjs2: 'react-dom',
+                commonjs: 'react-dom',
+                amd: 'react-dom'
+            }
+        },
+        keywords: ['react', 'react-component'],
+        dependencies: { 'react': '^15.0.1', 'react-dom': '^15.0.1' }
+    },
     'knockout': {
         externals: {
             'knockout': {
@@ -85,7 +103,16 @@ var platformOptions = {
 
 module.exports = function (options) {
     //TODO
-    options.platformPrefix = options.platform == 'knockout' ? 'ko' : options.platform;
+    switch(options.platform) {
+        case 'knockout':
+            options.platformPrefix = 'ko';
+            break;
+        case 'react-native':
+            options.platformPrefix = 'rn';
+            break;
+        default:
+            options.platformPrefix = options.platform;
+    }
     var packagePath = './packages/survey-' + options.platform + '/';
     var extractCSS = new ExtractTextPlugin({ filename: packagePath + 'survey.css' });
 
@@ -109,6 +136,13 @@ module.exports = function (options) {
                     fs.rename('./packages/survey-knockout/survey.knockout.min.js', './packages/survey-knockout/survey.ko.min.js');
                 } else {
                     fs.rename('./packages/survey-knockout/survey.knockout.js', './packages/survey-knockout/survey.ko.js');
+                }
+            }
+            if (options.platform === "react-native") {
+                if (options.buildType === "prod") {
+                    fs.rename('./packages/survey-react-native/survey.react-native.min.js', './packages/survey-react-native/survey.rn.min.js');
+                } else {
+                    fs.rename('./packages/survey-react-native/survey.react-native.js', './packages/survey-react-native/survey.rn.js');
                 }
             }
         }
@@ -195,7 +229,7 @@ module.exports = function (options) {
                 "process.env.ENVIRONMENT": JSON.stringify(options.buildType),
                 "process.env.VERSION": JSON.stringify(packageJson.version)
             }),
-            extractCSS
+            extractCSSreact-native
         ],
         devtool: 'inline-source-map'
     };
