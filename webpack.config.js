@@ -229,7 +229,7 @@ module.exports = function (options) {
                 "process.env.ENVIRONMENT": JSON.stringify(options.buildType),
                 "process.env.VERSION": JSON.stringify(packageJson.version)
             }),
-            extractCSSreact-native
+            extractCSS
         ],
         devtool: 'inline-source-map'
     };
